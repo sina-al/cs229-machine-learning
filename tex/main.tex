@@ -1,0 +1,148 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{todonotes}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\title{CS229 Machine Learning}
+\author{Sina Aleyaasin}
+
+\begin{document}
+
+\maketitle
+
+\section{Supervised Learning}
+
+Consider the task of modeling the relationship of some dependent variable (\textit{target}) on some dependent variable (\textit{feature}) given a data set.
+\begin{definition}
+A \textbf{training example} is an ordered \textit{feature-target} pair 
+    \begin{equation}
+    (x^{(i)}, y^{(i)}) \in \mathbb{X} \times \mathbb{Y}
+    \end{equation}
+\end{definition}
+\begin{definition}
+A \textbf{training set} of size $N$ is the set of training examples 
+\begin{equation}
+    \{(x^{(i)}, y^{(i)})| i = 1, 2, \dots N\}
+\end{equation}
+\end{definition}
+The objective of supervised learning is to produce some \textit{hypothesis} 
+\begin{equation}
+    h : \mathbb{X} \rightarrow \mathbb{Y}
+\end{equation}
+to model the relationship by means of the corresponding training set.
+\begin{definition}
+$\mathbf{Regression}$ is supervised learning for a continuous, real valued $\mathbb{Y} \equiv \mathbb{R}^{n+1}$.
+\end{definition}
+\begin{definition}
+\textbf{Classification} is supervised learning for a finite, discrete $\mathbb{Y}$. The hypothesis of a classification problem is also known as a \textbf{classifier}.
+\end{definition}
+
+\subsection{Linear Regression}
+Linear regression assumes a linear dependence of the target on the features. 
+\begin{equation}
+    \label{eqn: linear-regression}
+    h(x;\theta) \equiv h_{\theta}(x) = \theta^{T}x 
+\end{equation}
+where $\theta, x \in \mathbb{R}^{n+1}$.
+\begin{remark}
+Motivated by aesthetics, this notation adheres to the convention that every feature vector $x$ has a constant first element $x_{0}=1$ to account for the intercept term $\theta_{0}$.
+\end{remark}
+The parameter $\theta$ is determined by minimizing some \textit{loss function} that aims to quantify the "error" of the classifier.
+We consider here the loss function giving corresponding to the \textbf{ordinary least squares} regression model
+\begin{equation}
+    \label{eqn: loss-function}
+    J(\theta) = \sum_{i=1}^{N}J^{(i)}(\theta) =  \sum_{i=1}^{N}\frac{1}{2}\left(y^{(i)} - h_{\theta}(x^{(i)})\right)^{2}
+\end{equation}
+\subsubsection{Minimizing loss by normal equations}
+In some instances, as with the least mean squares regression model, the loss function may be minimized analytically to yield a closed formed solution for $\theta$
+
+\todo{theorem and proof of linear algebra + calculate theta}
+
+\subsubsection{Minimizing loss by gradient descent}
+For instances where no closed form solutions exist, one may perform a \textbf{gradient descent} until a desired threshold of convergence is reached.
+\begin{equation}
+    \theta_{j+1} = \theta_{j} - \alpha \nabla_{\theta}J(\theta)
+\end{equation}
+The parameter $\alpha$ is known as the \textbf{learning rate}.
+This difference equation describes \textbf{batch gradient decent}.
+When the training set is large, one common modification can be made
+\begin{equation}
+    \theta_{j+1} = \theta_{j} - \alpha \nabla_{\theta} J^{(i++)}(\theta_{j})
+\end{equation}
+where the $++$ operator indicates iteration through the training set with each global iteration. This is referred to as a \textbf{stochastic gradient descent}.
+
+\subsection{Probabilistic interpretation}
+In order to appreciate the choice of loss function in the ordinary-least-squares model, consider the "error" produced by a linear model in a training example
+\begin{align}
+    \label{eqn: training-example-error}
+    \epsilon^{(i)} &= y^{(i)} - h(x^{i}) \nonumber\\
+                &= y^{(i)} - \theta^{T}x^{(i)} \\ \nonumber
+\end{align}
+Let us assume that the distribution of $\epsilon^{(i)}$ in some training set is independently and identically distributed (IID) according to a Gaussian distribution
+\begin{equation}
+    p(e^{(i)}) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{e^{(i)2}}{2\sigma^{2}}\right)
+\end{equation}
+which by (\ref{eqn: training-example-error}) implies
+\begin{equation}
+    \label{eqn: gaussian-distribution}
+    p(y^{(i)}|x^{(i)}; \theta) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(y^{(i)} - \theta^{T}x^{(i)})^{2}}{2\sigma^{2}}\right) \\
+\end{equation}
+This assumption may alternatively be expressed 
+\begin{equation}
+    e^{(i)} \sim \mathcal{N}(0, \sigma^{2})
+\end{equation}
+Equation (\ref{eqn: gaussian-distribution}) states the conditional probability of the random variable $x^{(i)}$ given the random variable $y^{(i)}$, parameterised by $\theta$, takes the form of the given Gaussian distribution.
+Minimizing the error amounts to maximizing this probability.
+In order to prescribe this probability to a training set, we use matrix notation.
+\begin{definition}
+    The \textbf{design matrix} of a training set size $N$ is the matrix 
+    \begin{equation}
+    X = 
+    \begin{bmatrix}
+        x^{(1)T} \\
+        x^{(2)T} \\
+        \vdots \\
+        x^{(N)T}
+    \end{bmatrix}
+    \end{equation}
+\end{definition}
+The \textbf{likelihood} function of a training set can then be expressed
+\begin{equation}
+    L(\theta) = L(\theta; X, \vec{y}) = p (\vec{y}|X;\theta)
+\end{equation}
+where $\vec{y} = [y^{(1)}, y^{(2)}, \dots, y^{(N)}]^{T}$
+Using the independence assumption
+\begin{align}
+    L(\theta) &= \prod_{i=1}^{N}p(y^{(i)}|x^{(i)}; \theta) \nonumber \\
+    &= \prod_{i=1}^{N} \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(y^{(i)} - \theta^{T}x^{(i)})^{2}}{2\sigma^{2}}\right) 
+\end{align}
+We node that maximizing the likelihood function is equivalent to maximizing any monotonically increasing function of the likelihood.
+We choose the logarithm function \footnote{In computer arithmetic, addition is less expensive that multiplication. By using the logarithm function, products become sums and computation efficiency improves.} to yield
+\begin{align}
+    \ell(\theta) &\equiv \log L(\theta) \nonumber \\
+    &= \sum_{i=1}^{N} \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(y^{(i)} - \theta^{T}x^{(i)})^{2}}{2\sigma^{2}}\right) \nonumber \\
+    &\sim \sum_{i=1}^{N}\frac{1}{2}\left(y^{(i)} - \theta^{T}x^{(i)}\right)^{2} \label{eqn: likelihood-function}
+\end{align}
+Not incidentally, we see from (\ref{eqn: linear-regression}) that maximizing the likelihood  (\ref{eqn: likelihood-function}) is equivalent to minimizing our loss function defined in (\ref{eqn: loss-function}).
+
+\subsubsection{Weighted linear regression}
+One common modification to the liner regression model is to account for \textit{weights} in the loss function
+\begin{equation}
+    J(\theta) = \frac{1}{2}\sum_{i=1}^{N}w^{(i)}\left(y^{(i)} - h_{\theta}(x^{(i)})\right)^{2}
+\end{equation}
+A standard choice for $w^{(i)}$ is
+\begin{equation}
+    w^{(i)} = \exp\left(-\frac{(x^{(i)} - x)^{T}(x^{(i)}-x)}{2\tau^{2}}\right)
+\end{equation}
+where $\tau$ is the \textbf{bandwidth parameter} and \todo{elaborate on $x$} 
+
+\subsection{Logistic regression}
+\end{document}
