@@ -11,7 +11,7 @@
 \theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
-\title{CS229 Machine Learning}
+\title{Machine Learning}
 \author{Sina Aleyaasin}
 
 \begin{document}
@@ -19,8 +19,7 @@
 \maketitle
 
 \section{Supervised Learning}
-
-Consider the task of modeling the relationship of some dependent variable (\textit{target}) on some dependent variable (\textit{feature}) given a data set.
+Consider the task of modelling the relationship between some dependent variable (\textit{target}) on some explanatory independent variable (\textit{feature}) given a data set.
 \begin{definition}
 A \textbf{training example} is an ordered \textit{feature-target} pair 
     \begin{equation}
@@ -48,18 +47,18 @@ $\mathbf{Regression}$ is supervised learning for a continuous, real valued $\mat
 \subsection{Linear Regression}
 Linear regression assumes a linear dependence of the target on the features. 
 \begin{equation}
-    \label{eqn: linear-regression}
+    \label{eqn:linearregression}
     h(x;\theta) \equiv h_{\theta}(x) = \theta^{T}x 
 \end{equation}
 where $\theta, x \in \mathbb{R}^{n+1}$.
 \begin{remark}
 Motivated by aesthetics, this notation adheres to the convention that every feature vector $x$ has a constant first element $x_{0}=1$ to account for the intercept term $\theta_{0}$.
 \end{remark}
-The parameter $\theta$ is determined by minimizing some \textit{loss function} that aims to quantify the "error" of the classifier.
+The parameter $\theta$ is determined by minimizing some \textit{loss function} that aims to quantify the ``error'' of the classifier.
 We consider here the loss function giving corresponding to the \textbf{ordinary least squares} regression model
 \begin{equation}
-    \label{eqn: loss-function}
-    J(\theta) = \sum_{i=1}^{N}J^{(i)}(\theta) =  \sum_{i=1}^{N}\frac{1}{2}\left(y^{(i)} - h_{\theta}(x^{(i)})\right)^{2}
+    \label{eqn:lossfunction}
+    J(\theta) = \sum_{i=1}^{N}J^{(i)}(\theta) =  \sum_{i=1}^{N}\frac{1}{2}{\left(y^{(i)} - h_{\theta}(x^{(i)})\right)}^{2}
 \end{equation}
 \subsubsection{Minimizing loss by normal equations}
 In some instances, as with the least mean squares regression model, the loss function may be minimized analytically to yield a closed formed solution for $\theta$
@@ -80,9 +79,9 @@ When the training set is large, one common modification can be made
 where the $++$ operator indicates iteration through the training set with each global iteration. This is referred to as a \textbf{stochastic gradient descent}.
 
 \subsection{Probabilistic interpretation}
-In order to appreciate the choice of loss function in the ordinary-least-squares model, consider the "error" produced by a linear model in a training example
+In order to appreciate the choice of loss function in the ordinary-least-squares model, consider the ``error'' produced by a linear model in a training example
 \begin{align}
-    \label{eqn: training-example-error}
+    \label{eqn:trainingexampleerror}
     \epsilon^{(i)} &= y^{(i)} - h(x^{i}) \nonumber\\
                 &= y^{(i)} - \theta^{T}x^{(i)} \\ \nonumber
 \end{align}
@@ -90,23 +89,22 @@ Let us assume that the distribution of $\epsilon^{(i)}$ in some training set is 
 \begin{equation}
     p(e^{(i)}) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{e^{(i)2}}{2\sigma^{2}}\right)
 \end{equation}
-which by (\ref{eqn: training-example-error}) implies
+which by (\ref{eqn:trainingexampleerror}) implies
 \begin{equation}
-    \label{eqn: gaussian-distribution}
-    p(y^{(i)}|x^{(i)}; \theta) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(y^{(i)} - \theta^{T}x^{(i)})^{2}}{2\sigma^{2}}\right) \\
+    \label{eqn:gaussiandistribution}
+    p{(y^{(i)}|x^{(i)}; \theta)} = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{{(y^{(i)} - \theta^{T}x^{(i)})}^{2}}{2\sigma^{2}}\right) \\
 \end{equation}
 This assumption may alternatively be expressed 
 \begin{equation}
     e^{(i)} \sim \mathcal{N}(0, \sigma^{2})
 \end{equation}
-Equation (\ref{eqn: gaussian-distribution}) states the conditional probability of the random variable $x^{(i)}$ given the random variable $y^{(i)}$, parameterised by $\theta$, takes the form of the given Gaussian distribution.
+Equation (\ref{eqn:gaussiandistribution}) states the conditional probability of the random variable $x^{(i)}$ given the random variable $y^{(i)}$, parameterised by $\theta$, takes the form of the given Gaussian distribution.
 Minimizing the error amounts to maximizing this probability.
 In order to prescribe this probability to a training set, we use matrix notation.
 \begin{definition}
     The \textbf{design matrix} of a training set size $N$ is the matrix 
     \begin{equation}
-    X = 
-    \begin{bmatrix}
+    X = \begin{bmatrix}
         x^{(1)T} \\
         x^{(2)T} \\
         \vdots \\
@@ -118,31 +116,97 @@ The \textbf{likelihood} function of a training set can then be expressed
 \begin{equation}
     L(\theta) = L(\theta; X, \vec{y}) = p (\vec{y}|X;\theta)
 \end{equation}
-where $\vec{y} = [y^{(1)}, y^{(2)}, \dots, y^{(N)}]^{T}$
+where $\vec{y} = {[y^{(1)}, y^{(2)}, \dots, y^{(N)}]}^{T}$
 Using the independence assumption
 \begin{align}
     L(\theta) &= \prod_{i=1}^{N}p(y^{(i)}|x^{(i)}; \theta) \nonumber \\
-    &= \prod_{i=1}^{N} \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(y^{(i)} - \theta^{T}x^{(i)})^{2}}{2\sigma^{2}}\right) 
+    &= \prod_{i=1}^{N} \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{{(y^{(i)} - \theta^{T}x^{(i)})}^{2}}{2\sigma^{2}}\right) 
 \end{align}
 We node that maximizing the likelihood function is equivalent to maximizing any monotonically increasing function of the likelihood.
-We choose the logarithm function \footnote{In computer arithmetic, addition is less expensive that multiplication. By using the logarithm function, products become sums and computation efficiency improves.} to yield
+We choose the logarithm function\footnote{In computer arithmetic, addition is less expensive that multiplication. 
+By using the logarithm function, products become sums and computation efficiency improves.} to yield
 \begin{align}
     \ell(\theta) &\equiv \log L(\theta) \nonumber \\
-    &= \sum_{i=1}^{N} \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(y^{(i)} - \theta^{T}x^{(i)})^{2}}{2\sigma^{2}}\right) \nonumber \\
-    &\sim \sum_{i=1}^{N}\frac{1}{2}\left(y^{(i)} - \theta^{T}x^{(i)}\right)^{2} \label{eqn: likelihood-function}
-\end{align}
-Not incidentally, we see from (\ref{eqn: linear-regression}) that maximizing the likelihood  (\ref{eqn: likelihood-function}) is equivalent to minimizing our loss function defined in (\ref{eqn: loss-function}).
+    &= \sum_{i=1}^{N} \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{{(y^{(i)} - \theta^{T}x^{(i)})}^{2}}{2\sigma^{2}}\right) \nonumber \\
+    &\sim \sum_{i=1}^{N}\frac{1}{2}{\left(y^{(i)} - \theta^{T}x^{(i)}\right)}^{2} \label{eqn:likelihoodfunction}
+  \end{align}
+Not incidentally, we see from (\ref{eqn:linearregression}) that maximizing the likelihood  (\ref{eqn:likelihoodfunction}) is equivalent to minimizing our loss function defined in (\ref{eqn:lossfunction}).
 
 \subsubsection{Weighted linear regression}
 One common modification to the liner regression model is to account for \textit{weights} in the loss function
 \begin{equation}
-    J(\theta) = \frac{1}{2}\sum_{i=1}^{N}w^{(i)}\left(y^{(i)} - h_{\theta}(x^{(i)})\right)^{2}
+  J(\theta) = \frac{1}{2}\sum_{i=1}^{N}w^{(i)}{\left(y^{(i)} - h_{\theta}(x^{(i)})\right)}^{2}
 \end{equation}
 A standard choice for $w^{(i)}$ is
 \begin{equation}
-    w^{(i)} = \exp\left(-\frac{(x^{(i)} - x)^{T}(x^{(i)}-x)}{2\tau^{2}}\right)
+  w^{(i)} = \exp\left(-\frac{{(x^{(i)} - x)}^{T}(x^{(i)}-x)}{2\tau^{2}}\right)
 \end{equation}
 where $\tau$ is the \textbf{bandwidth parameter} and \todo{elaborate on $x$} 
 
 \subsection{Logistic regression}
+Logistic regression is an approach to \textit{binary classification} $\mathbb{Y} = \{0,1\}$ using a classifier naturally based on the \textbf{logistic function}.
+\begin{equation}
+  h{(x; \theta)} = \frac{1}{1+e^{-\theta^{T}x}}
+  \label{eqn:logisticclassifier}
+\end{equation}
+Probabilistically, we interpret $h$ such that 
+\begin{equation}
+  h_{\theta}(x) = P(y = 1 | x; \theta) 
+  \label{eqn:logisticprobabilistic}
+\end{equation}
+and hence the conditional probability of $y$ given $x$ takes the form
+\begin{equation}
+  P(y|x; \theta) = h_{\theta}{(x)}^{y} + {\left( 1 - h_{\theta}(x) \right)}^{1-y}
+  \label{eqn:logisticlikelihood}
+\end{equation}
+Extending (\ref{eqn:logisticlikelihood}) for a training set, using the assumption that the target errors are independently and identically distributed 
+\begin{align}
+  L{(\vec{y})} &= p(X; \theta) \nonumber \\
+  &= \prod_{i=1}^{N}{{\left( h_{\theta}(x^{(i)}) \right)}^{y^{(i)}}}{\left( 1 - h_{\theta}(x^{(i)}) \right)}^{(1-y^{(i)})} 
+\end{align}
+\todo{calculation of log likelihood plus derivative}
+
+\section{Generalised Linear Model}
+The models discussed in the previous section may be expressed as subsets of a generalised \textbf{exponential family} of distributions which posit the target error distribution according to an arbitrary statistical model.
+\begin{equation}
+  p{(y;\eta)} = b{(y)}\exp{(\eta^{T}T(y))-\alpha(\eta)}
+  \label{eqn:exponentialfamily}
+\end{equation}
+\todo{Define terms and express following distributions as GLM }
+\subsection{Gaussian distribution}
+\subsection{Bernoulli distribution}
+\subsection{Multinomial distribution}
+\subsection{Poisson distribution}
+\subsection{Gamma distribution}
+\subsection{Dirichlet distribution}
+
+\section{Constructing a Generalised Linear Model}
+\todo{Lay out strategy for designing. Exemplify with OLS, logistic regression, softmax regression.}
+\subsection{Ordinary least squares}
+\subsection{Logistic regression}
+\subsection{Softmax regression}
+
+\section{Generative learning}
+A \textit{generative model} aims to model data with a predictive capacity for both the feature and target variables of a data set. This is in contrast to \textit{discriminative} models such as the regression models in the previous section which aim to model the target variable based on input features.
+Probabilistically, we may interpret generative learning as determining a probability distribution of $x\in \mathbb{X}$ given $y\in\mathbb{Y}$
+\begin{equation}
+  p(x|y)
+  \label{eqn:generativelearning}
+\end{equation}
+
+
+\subsection{Gaussian discriminative analysis}
+\subsection{Naive Bayes}
+The Naive Bayes assumption states that the conditional probability of individual elements in a feature set given the target are \textit{independent}.
+That is to say, for $x\in\mathbb{R}^\left\{ n + 1 \right\}$,
+\begin{equation}
+  p(x|y) \equiv p(x_{1}, x_{2}, \dots x_{n+1}| y) = \prod_{i = 1}^{n+1}p(x_{i}|y)
+  \label{eqn:naivebayesassumption}
+\end{equation}
+Alternatively, this may be more intuitively expressed 
+\begin{equation}
+p(x_{i}|y) = p(x_{j}|y) \qquad \forall i,j \in \{1, 2, \dots, n + 1\}
+  \label{eqn:intuitivenaivebayes}
+\end{equation}
+\section{Laplace smoothing}
 \end{document}
