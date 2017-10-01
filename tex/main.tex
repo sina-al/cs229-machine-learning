@@ -205,8 +205,29 @@ That is to say, for $x\in\mathbb{R}^\left\{ n + 1 \right\}$,
 \end{equation}
 Alternatively, this may be more intuitively expressed 
 \begin{equation}
-p(x_{i}|y) = p(x_{j}|y) \qquad \forall i,j \in \{1, 2, \dots, n + 1\}
+  p(x_{i}|y) = p(x_{i}|y, x_{j}) \qquad \forall i,j \in \{1, 2, \dots, n + 1\}
   \label{eqn:intuitivenaivebayes}
 \end{equation}
-\section{Laplace smoothing}
+
+\subsection{Learning Theory}
+\subsubsection{Training error}
+The \textit{training error} of a classifier describes its failure ratio in predicting output $y^{(i)}$ in the training set
+\begin{equation}
+  \xi_{n}(h) = \frac{1}{n} \sum_{i=1}^{n} \mathbb{I}\left[ h(x^{(i)}) \neq y^{(i)}\right]
+\end{equation}
+where the operator $\mathbb{I}$ maps a proposition to the binary value corresponding to its truth value.
+\[
+  \mathbb{I}\left[true\right] = 1 \qquad \mathbb{I}\left[false\right] = 0
+\]
+A small training error does not necessarily an indication of the quality of a classifier. 
+A classifier may have a low training error but may not generalise well to data outside the training set. Such a classifier is the result of \textit{overtraining}.
+\subsubsection{Generalization error}
+Generalization is the application of a classifier to data beyond the training set. 
+The \textit{generalisation error} measures the failure ratio of predicting $y^{(i)}$ outside the training set.
+A good quality classifier is one that generalises well.
+\begin{equation}
+  \xi (h) = \frac{1}{n'} \sum_{i = n}^{n + n'} \left[ h(x^{(i)}) \neq y^{(i)}\right]
+\end{equation}
+
 \end{document}
+
