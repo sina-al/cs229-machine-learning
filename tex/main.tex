@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{todonotes}
+\usepackage{listings}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
@@ -17,8 +18,45 @@
 \begin{document}
 
 \maketitle
+\section{Preliminaries}
+Computational approaches to $learning$ from data involves some or all of following processes.
+\begin{enumerate}
+  \item \textbf{Feature engineering} encoding information about a learning problem into machine processable format.
+  \item \textbf{Model selection} employing appropriate models to describe data
+  \item \textbf{Training} process existing empirical data to make hypotheses for predict future, unknown data points.
+\end{enumerate}
+Techniques in machine learning coarsely divide into two categories
+\begin{itemize}
+  \item Supervised learning
+  \item Unsupervised learning
+\end{itemize}
 
-\section{Supervised Learning}
+\subsection{Feature engineering}
+Consider the problem of classifying objects from a set of examples $\chi \in X$. 
+To represent the problem in the domain of a machine, we must represent the objects using numbers.
+\begin{definition}
+A \texbf{feature vector} is some vector representation of an object $x$
+  \begin{equation}
+    x \equiv \phi(\chi) \in \mathbb{R}^{d}
+    \label{eqn:featureengineering}
+  \end{equation}
+\end{definition}
+The exercise of selecting $\phi$ is referred to as \textit{feature enginering}.
+We may express the set of examples $X$ in this way as a matrix.
+\begin{definition}
+A \textbf{design matrix} is a matrix of $N$ feature vectors representing $N$ objects 
+    \begin{equation}
+    X = \begin{bmatrix}
+        x^{(1)T} \\
+        x^{(2)T} \\
+        \vdots \\
+        x^{(N)T}
+    \end{bmatrix}
+    \end{equation}
+\end{definition} 
+
+
+\subsection{Supervised Learning}
 Consider the task of modelling the relationship between some dependent variable (\textit{target}) on some explanatory independent variable (\textit{feature}) given a data set.
 \begin{definition}
 A \textbf{training example} is an ordered \textit{feature-target} pair 
@@ -44,7 +82,12 @@ $\mathbf{Regression}$ is supervised learning for a continuous, real valued $\mat
 \textbf{Classification} is supervised learning for a finite, discrete $\mathbb{Y}$. The hypothesis of a classification problem is also known as a \textbf{classifier}.
 \end{definition}
 
-\subsection{Linear Regression}
+\subsection{Model selection}
+\todo{$\mathcal{H}$}
+\subsection{Training}
+\todo{$h\in\mathcal{H}$}
+
+\section{Linear Regression}
 Linear regression assumes a linear dependence of the target on the features. 
 \begin{equation}
     \label{eqn:linearregression}
@@ -60,12 +103,12 @@ We consider here the loss function giving corresponding to the \textbf{ordinary 
     \label{eqn:lossfunction}
     J(\theta) = \sum_{i=1}^{N}J^{(i)}(\theta) =  \sum_{i=1}^{N}\frac{1}{2}{\left(y^{(i)} - h_{\theta}(x^{(i)})\right)}^{2}
 \end{equation}
-\subsubsection{Minimizing loss by normal equations}
+\subsection{Minimizing loss by normal equations}
 In some instances, as with the least mean squares regression model, the loss function may be minimized analytically to yield a closed formed solution for $\theta$
 
 \todo{theorem and proof of linear algebra + calculate theta}
 
-\subsubsection{Minimizing loss by gradient descent}
+\subsection{Minimizing loss by gradient descent}
 For instances where no closed form solutions exist, one may perform a \textbf{gradient descent} until a desired threshold of convergence is reached.
 \begin{equation}
     \theta_{j+1} = \theta_{j} - \alpha \nabla_{\theta}J(\theta)
@@ -101,17 +144,6 @@ This assumption may alternatively be expressed
 Equation (\ref{eqn:gaussiandistribution}) states the conditional probability of the random variable $x^{(i)}$ given the random variable $y^{(i)}$, parameterised by $\theta$, takes the form of the given Gaussian distribution.
 Minimizing the error amounts to maximizing this probability.
 In order to prescribe this probability to a training set, we use matrix notation.
-\begin{definition}
-    The \textbf{design matrix} of a training set size $N$ is the matrix 
-    \begin{equation}
-    X = \begin{bmatrix}
-        x^{(1)T} \\
-        x^{(2)T} \\
-        \vdots \\
-        x^{(N)T}
-    \end{bmatrix}
-    \end{equation}
-\end{definition}
 The \textbf{likelihood} function of a training set can then be expressed
 \begin{equation}
     L(\theta) = L(\theta; X, \vec{y}) = p (\vec{y}|X;\theta)
@@ -143,7 +175,7 @@ A standard choice for $w^{(i)}$ is
 \end{equation}
 where $\tau$ is the \textbf{bandwidth parameter} and \todo{elaborate on $x$} 
 
-\subsection{Logistic regression}
+\section{Logistic regression}
 Logistic regression is an approach to \textit{binary classification} $\mathbb{Y} = \{0,1\}$ using a classifier naturally based on the \textbf{logistic function}.
 \begin{equation}
   h{(x; \theta)} = \frac{1}{1+e^{-\theta^{T}x}}
@@ -228,8 +260,74 @@ A good quality classifier is one that generalises well.
   \xi (h) = \frac{1}{n'} \sum_{i = n}^{n + n'} \left[ h(x^{(i)}) \neq y^{(i)}\right]
 \end{equation}
 
+\section{Linear classification}
+A linear classifier demarcates two classes within a feature space by means of a hyperplane known as a \textit{decision boundary}.  
+Objects are classified according to which side of the hyperplane they lie. 
+\begin{definition}
+For a feature space $\mathbb{X} \in \mathbb{R}^{d+1}$, a decision boundary is defined by the normal vector $\theta \in \mathbb{R}^{d + 1}$
+\begin{equation}
+  P_{\theta} = \{ z | z \cdot \theta\ = 0\}  
+  \label{eqn:hyperplane}
+\end{equation}
+\end{definition}
 
+The side to which a point $x \in \mathbb{R}^{d}$ lies may be qualified by 
+\begin{equation}
+  \text{sign} (x\cdot\theta) \equiv x\cdot \theta / ||x|| ||\theta||
+  \label{eqn:sideofplane}
+\end{equation}
+Thus, we may express an arbitrary binary linear classifier $h : \mathbb{R}^{d+1} \rightarrow \{+1, -1\} $ as
+\begin{equation}
+  h(x, \theta) = \text{sign}(x\cdot\theta)
+  \label{eqn:linearclassifier}
+\end{equation}
+\subsection{Separability}
+A training set $T = \{(x_{i}, y_{i})|i=1,2 \dots n\}$ is said to be \textit{linearly separable} if there exists a decision boundary that correctly classifies every example $(x_{i}, y_{i})$
+\begin{equation}
+  \exists\theta\forall (y, x)[y(x\cdot \theta) > 0]
+  \label{eqn:linearlyseparable}
+\end{equation}
 
+\subsection{Mistake-driven algorithms}
+Mistake driven algorithms are simple procedures used $learn$ the parameter $\theta$ of a linear model for some training set.
+
+\subsubsection{Perceptron}
+The perceptron algorithm iterates through the training set, modifying $\theta$ accordingly each time it miss-classifies a training example.
+\begin{lstlisting}[language=Python]
+def perceptron(training_set, epochs, init_theta):
+    theta = init_theta
+    for n in range(epochs):
+        for x, y in training_set:
+	    if y * theta.dot(x) <= 0:
+	    	theta += x
+    return theta
+\end{lstlisting}
+\todo{If training set is linearly separable, perceptron is guaranteed to converge to solution. Prove this!}
+\subsection{Loss functions}
+In the perceptron algorithm, every misclassification triggers a modification of equal significance to the parameter $\theta$. 
+This disregards the distance of the training example from the decision boundary.
+A somewhat more sophisticated approach would be to incorporate some \textit{loss funccion} that accounts for the margin of error in a misclassification an modifies $\theta$ accordingly.
+
+\subsubsection{Hinge Loss}
+Hinge loss gives penalizes $\theta$ on each iteration proportionally to the margin of error
+\begin{equation}
+  \text{Hinge}(x, y; \theta) = \max\{0, 1 - y(x\cdot\theta)\}
+  \label{eqn:hingeloss}
+\end{equation}
+\begin{lstlisting}[language=Python]
+def hingeloss(training_set, epochs, init_theta):
+    theta = init_theta
+    for n in range(epochs):
+        for x, y in training_set:
+	    theta += max(0, 1 - y * theta.dot(x))
+    return theta
+\end{lstlisting}
+\subsubsection{Passive-aggressive Algorithm}
+\todo{Large margin classifiers / Passive aggressive algorithm}
+\subsection{Support Vector Machines}
+
+\section{Recommender problems}
+
+\section{Non-linear classification}
 
 \end{document}
-
