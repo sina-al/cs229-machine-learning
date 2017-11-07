@@ -18,12 +18,13 @@
 \begin{document}
 
 \maketitle
+
 \section{Preliminaries}
 Computational approaches to $learning$ from data involves some or all of following processes.
 \begin{enumerate}
   \item \textbf{Feature engineering} encoding information about a learning problem into machine processable format.
   \item \textbf{Model selection} employing appropriate models to describe data
-  \item \textbf{Training} process existing empirical data to make hypotheses for predict future, unknown data points.
+  \item \textbf{Training} process existing empirical data to make hypotheses that predict future, unknown data points.
 \end{enumerate}
 Techniques in machine learning coarsely divide into two categories
 \begin{itemize}
@@ -35,7 +36,7 @@ Techniques in machine learning coarsely divide into two categories
 Consider the problem of classifying objects from a set of examples $\chi \in X$. 
 To represent the problem in the domain of a machine, we must represent the objects using numbers.
 \begin{definition}
-A \texbf{feature vector} is some vector representation of an object $x$
+A \textbf{feature vector} is some vector representation of an object $x$
   \begin{equation}
     x \equiv \phi(\chi) \in \mathbb{R}^{d}
     \label{eqn:featureengineering}
@@ -70,11 +71,11 @@ A \textbf{training set} of size $N$ is the set of training examples
     \{(x^{(i)}, y^{(i)})| i = 1, 2, \dots N\}
 \end{equation}
 \end{definition}
-The objective of supervised learning is to produce some \textit{hypothesis} 
+The objective is to learn a \textit{hypothesis}
 \begin{equation}
     h : \mathbb{X} \rightarrow \mathbb{Y}
 \end{equation}
-to model the relationship by means of the corresponding training set.
+that models the relationship between the data in the training set and can predict new data points beyond it.
 \begin{definition}
 $\mathbf{Regression}$ is supervised learning for a continuous, real valued $\mathbb{Y} \equiv \mathbb{R}^{n+1}$.
 \end{definition}
@@ -229,7 +230,7 @@ Probabilistically, we may interpret generative learning as determining a probabi
 \subsection{Gaussian discriminative analysis}
 \subsection{Naive Bayes}
 The Naive Bayes assumption states that the conditional probability of individual elements in a feature set given the target are \textit{independent}.
-That is to say, for $x\in\mathbb{R}^\left\{ n + 1 \right\}$,
+That is to say, for $x\in\mathbb{R}^\{ n + 1 \}$,
 \begin{equation}
   p(x|y) \equiv p(x_{1}, x_{2}, \dots x_{n+1}| y) = \prod_{i = 1}^{n+1}p(x_{i}|y)
   \label{eqn:naivebayesassumption}
@@ -306,7 +307,7 @@ def perceptron(training_set, epochs, init_theta):
 \subsection{Loss functions}
 In the perceptron algorithm, every misclassification triggers a modification of equal significance to the parameter $\theta$. 
 This disregards the distance of the training example from the decision boundary.
-A somewhat more sophisticated approach would be to incorporate some \textit{loss funccion} that accounts for the margin of error in a misclassification an modifies $\theta$ accordingly.
+A somewhat more sophisticated approach would be to incorporate some \textit{loss function} that accounts for the margin of error in a misclassification an modifies $\theta$ accordingly.
 
 \subsubsection{Hinge Loss}
 Hinge loss gives penalizes $\theta$ on each iteration proportionally to the margin of error
@@ -329,5 +330,119 @@ def hingeloss(training_set, epochs, init_theta):
 \section{Recommender problems}
 
 \section{Non-linear classification}
+One approach to non-linear classification involves performing a linear classification on the set of vectors resulting from some non-linear map of the feature set
+\begin{equation}
+  \varphi : \mathbb{R}^{d} \rightarrow \mathbb{R}^{k}
+  \label{eqn:nonlinearmap}
+\end{equation}
+where typically $k > d$.
+In effect, the training set becomes
+\begin{equation}
+  T \rightarrow T'_{n} = \{(\varphi(x_{i}), y_{i})|i = 1, 2 \dots n\}
+  \label{eqn:modtrainingset}
+\end{equation}
+The resulting linear decision boundary is mapped into a non-linear boundary after returning to the original coordinates.
+\subsection{Kernel methods}
+Feature maps in (\ref{eqn:nonlinearmap}) typically increase the dimension of the feature space and thus bear an inflated computational cost.
+A method used to address this involves circumventing computations with the high dimensional vectors in favour of \textbf{inner products} between them.  
+\begin{equation}
+  	\varphi(x)\cdot\varphi(x') = K(x, x')
+  \label{eqn:kernelfunction}
+\end{equation}
+$K$ is known as a \textit{kernel function}. A kernel function is \textit{valid} if there exists some $\varphi$ such that (\ref{eqn:kernelfunction}) holds.
 
+\subsubsection{Kernel perceptron}
+The kernel perceptron can be understood by consider $\theta$ expressed in the form 
+\begin{equation}
+  \theta = \sum_{i=1}^{n}\alpha_{i}y_{i}\varphi(x_{i})
+  \label{eqn:kernelperceptron}
+\end{equation}
+where $\alpha_{i}$ denotes the number of times training example $i$ was missclassified.
+Taking the inner product with $\varphi(x_{j})$ on both sides
+\begin{equation}
+  \theta\cdot\varphi(x_{j}) = \sum_{i=1}^{n} \alpha_{i}K(x_{i}, x_{j})
+  \label{eqn:kernelform}
+\end{equation}
+\todo{kernel perceptron pseudocode}
+
+\subsubsection{Kernel Functions}
+\todo{4 theorems for kernel composition}
+
+\section{Neural Networks}
+In the context of the methods discussed thus far, learning amounts to obtaining an hypothesis that maps elements in a feature space to predictions in the solution space
+\begin{equation}
+  h : \mathbb{R}^{d} \rightarrow \mathbb{Y}
+  \label{eqn:hypothesis}
+\end{equation}
+where for regression $\mathbb{Y} = \mathbb{R}$ and for classification $\mathbb{Y}$ is a small and finite.
+Neural networks are a class of hypotheses that are the functional composition of multiple \textit{layers}
+\begin{equation}
+  h = \ell_{1} \circ \ell_{2} \circ \dots \circ \ell_{n}   
+  \label{eqn:composition}
+\end{equation}
+where $n$ is the number of layers.
+Each layer is a map 
+\begin{equation}
+  \ell_{i} : \mathbb{R}^{k_{i - 1}} \rightarrow \mathbb{R} ^ {k_{i}}
+  \label{eqn:layers}
+\end{equation}
+where $k_{i} \in \mathbb{N}$, $k_{0} = d$ and $\mathbb{R}^{k_{n}} \equiv \mathbb{Y}$.
+A layer itself is composed of an \textit{activation} together with a transformation function 
+\begin{equation}
+  \ell_{i} = \alpha_{i} \circ \beta_{i} 
+  \label{eqn:layercomposition}
+\end{equation}
+The transformation function maps the vectors through spaces which, in general, vary in dimension between layers.
+\begin{equation}
+  \beta_{i} : \mathbb{R}^{k_{i-1}} \rightarrow \mathbb{R}^{k_{i}}
+  \label{eqn:transformation}
+\end{equation}
+Using the notation $\mathbb{M}(m, n)$ to denote an $m \times n$ real matrix, the transformation takes the form
+\begin{equation}
+  \beta_{i}(x; W_{i}, b_{i}) = W_{i} x + b_{i}
+  \label{eqn:transformfunction}
+\end{equation}
+where the weights  $W_{i}, b_{i}$ are parameters
+\begin{equation}
+  x \in \mathbb{R}^{k_{i-1}} \quad W_{i} \in \mathbb{M}(k_{i-1}, k_{i}) \quad b_{i}\in \mathbb{R}^{k_{i}} 
+  \label{eqn:weights}
+\end{equation}
+The activation is inspired by and typically mimics the role of \textit{threshold potential} in a biological neuron 
+\begin{equation}
+  \alpha_{i} : \mathbb{R}^{k_{i}} \rightarrow \mathbb{R}^{k_{i}}
+  \label{eqn:activation}
+\end{equation}
+Examples of commonly used activation functions include the sigmoid function (\ref{eqn:logistic}), ReLU ({\ref{eqn:relu}}), hyperbolic tangent (\ref{eqn:hyperbolictan}).
+
+\begin{equation}
+\label{eqn:logistic}
+  \alpha(x) &=\frac{1}{1 + \exp(x)}
+\end{equation}
+
+\begin{equation}
+ \label{eqn:relu} 
+  \alpha(x) &= \begin{cases}
+    0 \quad \text{for} \quad x \leq 0 \\
+    x \quad \text{for} \quad x > 0
+  \end{cases}
+\end{equation}
+
+\begin{equation}
+  \alpha(x) = \text{tanh}(x)
+  \label{eqn:hyperbolictan}
+\end{equation}
+A neural network is parameterized by the set of weights 
+\begin{equation}
+  \Theta = \{W_{i}, b_{i}| i = 1, 2, \dots n\}
+  \label{eqn:weights}
+\end{equation}
+The set of hypotheses for a particular neural network can may compactly be expressed
+\begin{equation}
+  \mathcal{H} = h(x;\Theta) 
+  \label{eqn:neuralnetwork}
+\end{equation}
+Finding a $h \in \mathcal{H}$ that generalises well from a given training set amounts learning the parameter $\Theta$.
+This is the objective of \textit{training}.
+\subsection{Training neural networks}
 \end{document}
+
